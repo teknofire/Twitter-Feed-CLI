@@ -1,0 +1,24 @@
+Twitter Feed CLI
+
+This is just a quick and dirty cli tool for showing a twitter feed from a specific search param.
+
+Currently it starts with a 5 second delay and which increases by 5 seconds each time a search is done and no results are found up to a max of 60 seconds.
+
+Usage
+-----
+./twits.rb <search term>
+
+Search term can be any string, including the standard twitter # and @ keywords
+
+Requirements
+------------
+
+ruby
+rubygems
+gems: term-ansicolor, twitter, htmlentities
+
+
+TODO
+----
+
+Expose some options for modifying the delay between checks.
