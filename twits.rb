@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 ##
-# Quick little script to display all twitter posts with the word "OSCON"
+# Quick little script to display all twitter posts based on a search term
 # Required gems:
 #   * twitter
 #   * htmlentities
