@@ -15,9 +15,11 @@ require 'term/ansicolor'
 
 search = ARGV.pop
 
-
 last_seen = 0
-delay = 10
+start_delay = 5
+max_delay = 60
+
+delay = start_delay
 coder = HTMLEntities.new
 
 def usage
@@ -41,6 +43,7 @@ puts "Showing all \"#{Color.bold search}\" twitter messages"
 while(1)
   Twitter::Search.new(search).to_a.reverse.each do |r|
     next if r.id <= last_seen
+    delay = start_delay
     last_seen = r.id
     created_at = Time.parse(r.created_at)
     
@@ -50,6 +53,7 @@ while(1)
 
     EOTXT
   end
-  
+
 	sleep delay
+  delay += start_delay unless delay >= max_delay
 end
