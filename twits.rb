@@ -41,19 +41,29 @@ end
 puts "Showing all \"#{Color.bold search}\" twitter messages"
 
 while(1)
-  Twitter::Search.new(search).to_a.reverse.each do |r|
-    next if r.id <= last_seen
-    delay = start_delay
-    last_seen = r.id
-    created_at = Time.parse(r.created_at)
-    
-    puts <<-EOTXT
+  begin
+    Twitter::Search.new(search).to_a.reverse.each do |r|
+      next if r.id <= last_seen
+      delay = start_delay
+      last_seen = r.id
+      created_at = Time.parse(r.created_at)
+      
+      puts <<-EOTXT
 |#{Color.bold Color.green r.from_user}| #{coder.decode(r.text)}
 |#{Color.bold Color.blue 'Posted'}| #{created_at}
 
-    EOTXT
-  end
+      EOTXT
+    end
 
-	sleep delay
-  delay += start_delay unless delay >= max_delay
+  	sleep delay
+    delay += start_delay unless delay >= max_delay
+  rescue SocketError => e
+    puts "Network error, will try again in 60 seconds"
+    sleep 60
+  rescue => e
+    puts "#{e.class.to_s} encountered: #{e.to_s}"
+    puts e.backtrace
+    puts "Sleeping for 60 seconds before trying again"
+    sleep 60
+  end
 end
