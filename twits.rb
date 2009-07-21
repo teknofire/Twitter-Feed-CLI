@@ -15,14 +15,25 @@ require 'term/ansicolor'
 
 search = ARGV.pop
 
+
 last_seen = 0
 delay = 10
 coder = HTMLEntities.new
+
+def usage
+  puts "Usage: #{$0} <search>"
+end
 
 class Color
   class << self
     include Term::ANSIColor
   end
+end
+
+if search.nil? or search.empty?
+  puts "Error: Please specify a search term to display"
+  usage
+  exit
 end
 
 puts "Showing all \"#{Color.bold search}\" twitter messages"
