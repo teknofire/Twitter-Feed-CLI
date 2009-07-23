@@ -12,12 +12,15 @@ require 'rubygems'
 require 'twitter'
 require 'htmlentities'
 require 'term/ansicolor'
+require 'active_support'
 
 search = ARGV.pop
 
 last_seen = 0
-start_delay = 5
-max_delay = 60
+start_delay = 10
+inc_delay = 5
+max_delay = 60*5
+sleep_count = 0
 
 delay = start_delay
 coder = HTMLEntities.new
@@ -40,6 +43,15 @@ end
 
 puts "Showing all \"#{Color.bold search}\" twitter messages"
 
+ctrlc_at=Time.now
+trap("INT") {
+  exit if (Time.now - ctrlc_at) < 5.seconds
+
+  puts "Press Ctrl-C again to exit"
+  sleep_count = max_delay
+  ctrlc_at = Time.now
+}
+
 while(1)
   begin
     Twitter::Search.new(search).to_a.reverse.each do |r|
@@ -55,11 +67,18 @@ while(1)
       EOTXT
     end
 
-  	sleep delay
-    delay += start_delay unless delay >= max_delay
+    sleep_count = 0
+    while(sleep_count < delay)
+    	sleep 1
+      sleep_count += 1
+    end
+    delay += inc_delay unless delay >= max_delay
   rescue SocketError => e
     puts "Network error, will try again in 60 seconds"
     sleep 60
+  rescue Crack::ParseError => e
+    puts "Error: #{e}"
+    sleep 10
   rescue => e
     puts "#{e.class.to_s} encountered: #{e.to_s}"
     puts e.backtrace
