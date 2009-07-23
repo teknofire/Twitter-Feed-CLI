@@ -21,6 +21,7 @@ start_delay = 10
 inc_delay = 5
 max_delay = 60*5
 sleep_count = 0
+ctrlc_at=Time.now
 
 delay = start_delay
 coder = HTMLEntities.new
@@ -43,15 +44,6 @@ end
 
 puts "Showing all \"#{Color.bold search}\" twitter messages"
 
-ctrlc_at=Time.now
-trap("INT") {
-  exit if (Time.now - ctrlc_at) < 5.seconds
-
-  puts "Press Ctrl-C again to exit"
-  sleep_count = max_delay
-  ctrlc_at = Time.now
-}
-
 while(1)
   begin
     Twitter::Search.new(search).to_a.reverse.each do |r|
@@ -67,12 +59,15 @@ while(1)
       EOTXT
     end
 
-    sleep_count = 0
-    while(sleep_count < delay)
-    	sleep 1
-      sleep_count += 1
-    end
+    sleep delay
     delay += inc_delay unless delay >= max_delay
+  rescue Interrupt
+    exit if (Time.now - ctrlc_at) < 5.seconds
+    
+    puts "Press Ctrl-C again to exit"
+    # Reset the delay and record when the interrupt was recieved in order to exit if we recieve another signal in a short time
+    delay = start_delay
+    ctrlc_at = Time.now
   rescue SocketError => e
     puts "Network error, will try again in 60 seconds"
     sleep 60
