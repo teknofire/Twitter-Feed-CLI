@@ -15,7 +15,7 @@ Requirements
 
 ruby
 rubygems
-gems: term-ansicolor, twitter, htmlentities
+gems: term-ansicolor, twitter, htmlentities, active_support
 
 
 TODO
