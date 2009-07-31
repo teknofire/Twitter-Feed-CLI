@@ -14,12 +14,11 @@ require 'htmlentities'
 require 'term/ansicolor'
 require 'active_support'
 
-search = ARGV.pop
+search = ARGV.join ' OR '
 
 last_seen = 0
-start_delay = 10
-inc_delay = 5
-max_delay = 60*5
+start_delay = 5 
+max_delay = 300 
 sleep_count = 0
 ctrlc_at=Time.now
 
@@ -60,7 +59,7 @@ while(1)
     end
 
     sleep delay
-    delay += inc_delay unless delay >= max_delay
+    delay = (delay * 1.8).to_i unless delay >= max_delay
   rescue Interrupt
     exit if (Time.now - ctrlc_at) < 5.seconds
     
